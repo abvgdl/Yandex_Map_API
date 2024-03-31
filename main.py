@@ -33,7 +33,7 @@ class MapWindow(QMainWindow):
             self.label.setPixmap(pixmap)
 
     def keyPressEvent(self, event):
-        step = 0.1  # Шаг перемещения центра карты
+        step = 0.1
 
         if event.key() == Qt.Key_PageDown:
             if self.zoom > 0:
