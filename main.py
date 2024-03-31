@@ -20,7 +20,7 @@ class MapWindow(QMainWindow):
         self.zoom = zoom
         self.map_type = "map"
         self.marker = []
-        self.show_index = True
+        self.show_index = False
 
         self.api_key = "40d1649f-0493-4b70-98ba-98533de7710b"
 
@@ -87,7 +87,7 @@ class MapWindow(QMainWindow):
                             "Address", {}).get("postal_code", "")
                         if postal_code:
                             formatted_address += f", {postal_code}"
-                    self.address_label.setText(f"Адрес: {formatted_address}")
+                    self.address_label.setText(formatted_address)
 
     def reset_search(self):
         self.latitude = self.default_latitude
