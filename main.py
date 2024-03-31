@@ -35,7 +35,7 @@ class MapWindow(QMainWindow):
 
     def update_map(self, marker=None):
         if self.marker and not marker:
-            marker = self.marker
+            marker = self.marker #Поторопился
         if not marker:
             map_url = f"https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&z={self.zoom}&l={self.map_type}&size=650,400&"
         else:
