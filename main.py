@@ -4,9 +4,10 @@ from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
+
 class MapWindow(QMainWindow):
     def __init__(self, latitude, longitude, zoom):
-        super().__init()
+        super().__init__()
 
         self.setWindowTitle("Yandex Map")
         self.setGeometry(100, 100, 650, 450)
@@ -24,7 +25,7 @@ class MapWindow(QMainWindow):
         self.update_map()
 
     def update_map(self):
-        map_url = f"https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&z={self.zoom}&l={self.map_type}&size=650,450&apikey={self.api_key}"
+        map_url = f"https://static-maps.yandex.ru/1.x/?ll={self.longitude},{self.latitude}&z={self.zoom}&l={self.map_type}&size=650,450&"
         response = requests.get(map_url)
 
         if response.status_code == 200:
@@ -73,6 +74,7 @@ class MapWindow(QMainWindow):
             else:
                 self.map_type = "map"
             self.update_map()
+
 
 if __name__ == "__main__":
     latitude = 55.7558
