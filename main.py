@@ -2,8 +2,8 @@ import math
 import sys
 import requests
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QLineEdit, QPushButton, QCheckBox
-from PyQt5.QtGui import QPixmap, QPainter, QPen
-from PyQt5.QtCore import Qt, QEvent
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 
 
 class MapWindow(QMainWindow):
@@ -143,19 +143,41 @@ class MapWindow(QMainWindow):
             self.update_map()
 
     def mousePressEvent(self, event):
-        x = event.pos().x()
-        y = event.pos().y()
+        if event.button() == Qt.LeftButton or event.button() == Qt.RightButton:
+            x = event.pos().x()
+            y = event.pos().y()
 
-        dy = 250 - y
-        dx = x - 325
-        lon = self.longitude + dx * 0.0000428 * 2 ** (15 - self.zoom)
-        lat = self.latitude + dy * 0.0000428 * math.cos(math.radians(self.latitude)) * 2 ** (15 - self.zoom)
+            dy = 250 - y
+            dx = x - 325
+            lon = self.longitude + dx * 0.0000428 * 2 ** (15 - self.zoom)
+            lat = self.latitude + dy * 0.0000428 * math.cos(math.radians(self.latitude)) * 2 ** (15 - self.zoom)
 
-        self.latitude = round(lat, 6)
-        self.longitude = round(lon, 6)
-        self.update_map()
-        self.add_marker(lat, lon)
-        self.search_location()
+            self.latitude = round(lat, 6)
+            self.longitude = round(lon, 6)
+            self.update_map()
+            self.add_marker(lat, lon)
+            if event.button() == Qt.LeftButton:
+                self.search_location()
+            elif event.button() == Qt.RightButton:
+                self.search_organization(lat, lon)
+
+    def search_organization(self, lat, lon):
+        print('YES')
+        search_url = f"https://search-maps.yandex.ru/v1/?ll={lon},{lat}&spn=0.001,0.001&&lang=ru_RU&type=biz&results=10&apikey={self.api_key}"
+        response = requests.get(search_url)
+        print(response.status_code, search_url)
+        if response.status_code == 200:
+            data = response.json()
+            organizations = data["features"]
+            print(organizations)
+            for org in organizations:
+                org_lon, org_lat = org["geometry"]["coordinates"]
+                distance = math.sqrt((org_lat - lat) ** 2 + (org_lon - lon) ** 2)
+                print(distance)
+                if distance <= 0.0004:
+                    print(org['properties']['name'])
+                    self.address_label.setText(f"Организация: {org['properties']['name']}")
+                    break
 
     def toggle_index(self):
         self.show_index = not self.show_index
