@@ -1,4 +1,4 @@
-import pprint
+import math
 import sys
 import requests
 from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QLineEdit, QPushButton, QCheckBox
@@ -11,7 +11,7 @@ class MapWindow(QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Yandex Map")
-        self.setGeometry(100, 150, 700, 500)
+        self.setGeometry(100, 100, 650, 500)
 
         self.default_latitude = latitude
         self.default_longitude = longitude
@@ -100,6 +100,7 @@ class MapWindow(QMainWindow):
         self.update_map(marker=(lon, lat))
 
     def keyPressEvent(self, event):
+        print(event)
         step = 0.1
 
         if event.key() == Qt.Key_PageDown:
@@ -140,6 +141,21 @@ class MapWindow(QMainWindow):
             else:
                 self.map_type = "map"
             self.update_map()
+
+    def mousePressEvent(self, event):
+        x = event.pos().x()
+        y = event.pos().y()
+
+        dy = 250 - y
+        dx = x - 325
+        lon = self.longitude + dx * 0.0000428 * 2 ** (15 - self.zoom)
+        lat = self.latitude + dy * 0.0000428 * math.cos(math.radians(self.latitude)) * 2 ** (15 - self.zoom)
+
+        self.latitude = round(lat, 6)
+        self.longitude = round(lon, 6)
+        self.update_map()
+        self.add_marker(lat, lon)
+        self.search_location()
 
     def toggle_index(self):
         self.show_index = not self.show_index
